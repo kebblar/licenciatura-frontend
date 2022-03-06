@@ -534,5 +534,9 @@ footer p {
     border-radius: 5%;
   }
 
+  header li a {
+    font-size: 10px;
+  }
+
 }
 </style>
