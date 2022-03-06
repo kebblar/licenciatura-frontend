@@ -1,11 +1,11 @@
 <template>
     <div>
 <header>
-        <ul>
-  <li><a class="active" href="#home">Inicio</a></li>
-  <li><a href="#news">Iniciar sesion</a></li>
-  <li><a href="#contact">Registrarse</a></li>
-  <li style="float:right"><a href="#about">Acerca de</a></li>
+  <ul>
+  <li><router-link to="/">Inicio</router-link></li>
+  <li><router-link to="/login">Iniciar sesion</router-link></li>
+  <li><router-link to="/registro">Registrarse</router-link></li>
+  <li style="float:right"><router-link to="/acerca-de">Acerca de</router-link></li>
 </ul>
     </header>
 
@@ -13,7 +13,7 @@
         <div class="jumbotron">
             <div class="container">
             <h1>     Conecta con las personas</h1>
-            <a href="#" class="btn-main"> Registrarme </a>
+            <router-link class="btn-main" to="/registro">Registrarse</router-link>
             </div>
         </div>
         </main>
@@ -98,8 +98,6 @@
         </div>
 
         </section>
-
-        <font-awesome-icon icon="fa-regular fa-circle-question" />
 
         <footer>
         <div class="container">
