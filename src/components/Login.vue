@@ -28,7 +28,8 @@
 </template>
 <script>
 import axios from 'axios';
-//import store from '../utils/store';
+import store from '../store/index';
+import router from '../router';
 export default{
     name: 'Login',
     data: function(){
@@ -45,11 +46,10 @@ export default{
                 mail: this.correo,
                 clave: this.clave,
           }).then(response => {
-                //store.commit("set_jwt", response.data.jwt);
-                //console.log(store.state.jwt);
-                console.log(response.data.jwt);
+                store.commit("set_jwt", response.data.jwt);
+                console.log(store.state.jwt);
                 this.msj_error = '';
-                //router.push("Perros")
+                router.push("/")
             }).catch(error => {
                 console.log(error.response.status);
                 this.msj_error = error.response.data.Accion;
