@@ -5,7 +5,7 @@ import Login from '../components/Login.vue'
 import Registro from '../components/Registro.vue'
 import AcercaDe from '../components/AcercaDe.vue'
 import NotFound from '../components/NotFound.vue'
-
+import RecuperarClave from '../components/RecuperarClave.vue'
 
 Vue.use(VueRouter)
 
@@ -29,6 +29,11 @@ const routes = [
     path: '/acerca-de',
     name: 'acerca-de',
     component: AcercaDe
+  },
+  {
+    path: '/recuperar-clave',
+    name: 'recuperar-clave',
+    component: RecuperarClave
   },
   {
     path: '/*',
