@@ -1,22 +1,31 @@
 <template>
+<div>
+    <header>
+        <ul>
+            <li><router-link to="/">Inicio</router-link></li>
+            <li><router-link to="/login">Iniciar sesion</router-link></li>
+            <li><router-link to="/registro">Registrarse</router-link></li>
+            <li style="float:right"><router-link to="/acerca-de">Acerca de</router-link></li>
+        </ul>
+    </header>
     <section>
-        <div class="card">
+        <div class="card my-card" >
             <div class=card-header>
-                <h2>Inicia sesion para continuar</h2>
+                <h2>Inicia sesion</h2>
             </div>
             <div class="card-body">
                 <label>
                     Correo:
-                    <input type="text" v-model="correo"/>
+                    <input type="email" v-model="correo" class="form-control"/>
                 </label>
                 <label>
                     Clave:
-                    <input type="password" v-model="clave"/>
+                    <input type="password" class="form-control" v-model="clave"/>
                 </label>
-                <button v-on:click="login">Iniciar sesion</button>
+                <button class="btn btn-primary mb-2" v-on:click="login">Iniciar sesion</button>
                 <hr>
                 <div class="footer">
-                    <router-link to="/">Regresar a inicio</router-link>
+                    <router-link to="/registro">Registrarme</router-link>
                     <router-link to="/recuperar-clave">Olvide mi clave</router-link>
                 </div>
             </div>
@@ -25,6 +34,7 @@
             <p>{{msj_error}}</p>
         </b-modal>
     </section>
+    </div>
 </template>
 <script>
 import axios from 'axios';
@@ -65,11 +75,57 @@ export default{
 
 
 <style scoped>
+
+    html, body {
+  margin: 0;
+  padding: 0;
+}
+
+header ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #333;
+  height: 8vh;
+}
+
+header li {
+  float: left;
+  border-right:1px solid #bbb;
+  height: 100%;
+}
+
+header li:last-child {
+  border-right: none;
+}
+
+header li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  height: 100%;
+}
+
+header li a:hover:not(.active) {
+  background-color: #111;
+}
+
+header .active {
+  background-color: #8c8f8e;
+}
+
+    .my-card{
+        width: 40vw;
+    }
+
     section {
         width: 100%;
-        height: 500px;
+        height: 92vh;
         display: flex;
-        background-color: black;
+        background-color: gainsboro;
         align-items: center;
         justify-content: center;
     }
@@ -97,9 +153,5 @@ export default{
         flex: 120px;
         text-align: center;
         text-decoration: none;
-    }
-    .error{
-        color: red;
-        font-style: arial;
     }
 </style>
