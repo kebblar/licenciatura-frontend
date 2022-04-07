@@ -1,14 +1,7 @@
 <template>
     <div>
-<header>
-  <ul>
-  <li><router-link to="/">Inicio</router-link></li>
-  <li><router-link to="/login">Iniciar sesion</router-link></li>
-  <li><router-link to="/registro">Registrarse</router-link></li>
-  <li style="float:right"><router-link to="/acerca-de">Acerca de</router-link></li>
-</ul>
-    </header>
 
+        <NavBarInicio/>
         <main>
         <div class="jumbotron">
             <div class="container">
@@ -121,6 +114,7 @@
 </template>
 
 <script>
+import NavBarInicio from './NavBarInicio.vue';
 
 export default {
     name: 'PantallaInicio',
@@ -132,6 +126,9 @@ export default {
           contenido: ""
       }
   },
+    components:{
+      'NavBarInicio':NavBarInicio
+    },
     methods:{
       transparentes: function(){
         this.titulo = "Transparentes";
@@ -174,41 +171,6 @@ html, body {
   margin: 0;
   padding: 0;
 }
-
-header ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  background-color: #333;
-}
-
-header li {
-  float: left;
-  border-right:1px solid #bbb;
-}
-
-header li:last-child {
-  border-right: none;
-}
-
-header li a {
-  display: block;
-  color: white;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-}
-
-header li a:hover:not(.active) {
-  background-color: #111;
-}
-
-header .active {
-  background-color: #8c8f8e;
-}
-
-
 
 main {
   position:relative;
