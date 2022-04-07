@@ -29,7 +29,7 @@ export default {
             padding: 0;
             overflow: hidden;
             background-color: #333;
-            height: 8vh;
+            height: 60px;
         }
 
         header li {

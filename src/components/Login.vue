@@ -56,7 +56,7 @@ export default{
                 store.commit("set_jwt", response.data.jwt);
                 console.log(store.state.jwt);
                 this.msj_error = '';
-                router.push("/")
+                router.push("/perfil")
             }).catch(error => {
                 console.log(error.response.status);
                 this.msj_error = error.response.data.Accion;
@@ -85,6 +85,7 @@ export default{
     section {
         width: 100%;
         height: 92vh;
+        min-height: 400px;
         display: flex;
         background-color: gainsboro;
         align-items: center;
@@ -114,5 +115,10 @@ export default{
         flex: 120px;
         text-align: center;
         text-decoration: none;
+    }
+    @media (max-width: 1300px) {
+        .my-card{
+            width: 80vw;
+        }
     }
 </style>

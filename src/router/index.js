@@ -6,6 +6,7 @@ import Registro from '../components/Registro.vue'
 import AcercaDe from '../components/AcercaDe.vue'
 import NotFound from '../components/NotFound.vue'
 import RecuperarClave from '../components/RecuperarClave.vue'
+import Perfil from '../components/Perfil.vue'
 
 Vue.use(VueRouter)
 
@@ -34,6 +35,11 @@ const routes = [
     path: '/recuperar-clave',
     name: 'recuperar-clave',
     component: RecuperarClave
+  },
+  {
+    path: '/perfil',
+    name: 'perfil',
+    component: Perfil
   },
   {
     path: '/*',
