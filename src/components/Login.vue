@@ -34,6 +34,7 @@ import axios from 'axios';
 import store from '../store/index';
 import router from '../router';
 import NavBarInicio from './NavBarInicio.vue';
+import SERVER from '../sites.js'
 export default{
     name: 'Login',
     data: function(){
@@ -47,9 +48,14 @@ export default{
     components:{
         'NavBarInicio':NavBarInicio
     },
+    created() {
+      if (store.state.jwt) {
+        router.push("/perfil")
+      }
+    },
     methods:{
         login(){
-          axios.post('http://localhost:8080/usuario/login/', {
+          axios.post(SERVER + '/usuario/login/', {
                 mail: this.correo,
                 clave: this.clave,
           }).then(response => {
