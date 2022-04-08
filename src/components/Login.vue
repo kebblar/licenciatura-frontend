@@ -15,6 +15,7 @@
                     Clave:
                     <input type="password" class="form-control" v-model="clave"/>
                 </label>
+                
                 <button class="btn btn-primary mb-2" v-on:click="login">Iniciar sesion</button>
                 <hr>
                 <div class="footer">
@@ -25,6 +26,9 @@
         </div>
         <b-modal id="error" :title="titulo_error">
             <p>{{msj_error}}</p>
+        </b-modal>
+        <b-modal id="aviso" :title="titulo_aviso" @hidden="borrarMensaje">
+            <p>{{body_aviso}}</p>
         </b-modal>
     </section>
     </div>
@@ -42,18 +46,32 @@ export default{
             correo: '',
             clave: '',
             msj_error: '',
-            titulo_error: ''
+            titulo_error: '',
+            titulo_aviso: '',
+            body_aviso: ''
         }
     },
     components:{
         'NavBarInicio':NavBarInicio
     },
     created() {
+      
       if (store.state.jwt) {
-        router.push("/perfil")
+        //router.push("/perfil")
+      }
+      
+    },
+    mounted(){
+        if (store.state.msj_body){
+          this.titulo_aviso = store.state.msj_title
+          this.body_aviso = store.state.msj_body
+          this.$bvModal.show("aviso");
       }
     },
     methods:{
+        borrarMensaje(){
+            store.commit("set_msj", {msj_title:"", msj_body:""});
+        },
         login(){
           axios.post(SERVER + '/usuario/login/', {
                 mail: this.correo,
@@ -76,55 +94,53 @@ export default{
 }
 </script>
 
-
 <style scoped>
-
-    html, body {
-  margin: 0;
-  padding: 0;
-}
-
-    .my-card{
-        width: 40vw;
-    }
-
-    section {
-        width: 100%;
-        height: 92vh;
-        min-height: 400px;
-        display: flex;
-        background-color: gainsboro;
-        align-items: center;
-        justify-content: center;
-    }
-    label{
-        display: block;
-    }
-    input {
-        width: 100%;
-    }
-    h2 {
-        text-align: center;
-    }
-    button {
-        margin-top: 2%;
-    }
-    .footer {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-wrap: wrap;
-
-    }
-    .footer a{
-        margin-right: 4%;
-        flex: 120px;
-        text-align: center;
-        text-decoration: none;
-    }
-    @media (max-width: 1300px) {
-        .my-card{
-            width: 80vw;
-        }
-    }
+  html, body {
+    margin: 0;
+    padding: 0;
+  }
+  
+      .my-card{
+          width: 40vw;
+      }
+  
+      section {
+          width: 100%;
+          height: 92vh;
+          min-height: 400px;
+          display: flex;
+          background-color: gainsboro;
+          align-items: center;
+          justify-content: center;
+      }
+      label{
+          display: block;
+      }
+      input {
+          width: 100%;
+      }
+      h2 {
+          text-align: center;
+      }
+      button {
+          margin-top: 2%;
+      }
+      .footer {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-wrap: wrap;
+  
+      }
+      .footer a{
+          margin-right: 4%;
+          flex: 120px;
+          text-align: center;
+          text-decoration: none;
+      }
+      @media (max-width: 1300px) {
+          .my-card{
+              width: 80vw;
+          }
+      }
 </style>
