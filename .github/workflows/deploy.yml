@@ -31,3 +31,6 @@ jobs:
         
       - name: Deploy for production
         run: ssh staging 'cd /home/ubuntu/licenciatura/licenciatura-frontend && npm run build'
+      
+      - name: Restart docker container
+        run: ssh staging 'cd /home/ubuntu/licenciatura && ./run_app_front.sh'
