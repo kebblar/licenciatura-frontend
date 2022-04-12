@@ -8,6 +8,7 @@ import NotFound from '../components/NotFound.vue'
 import RecuperarClave from '../components/RecuperarClave.vue'
 import ConfirmaRecuperarClave from '../components/ConfirmaRecuperarClave.vue'
 import Perfil from '../components/Perfil.vue'
+import ConfirmaRegistro from '../components/ConfirmaRegistro.vue'
 
 Vue.use(VueRouter)
 
@@ -41,6 +42,11 @@ const routes = [
     path: '/confirma-recuperar-clave',
     name: 'confirma-recuperar-clave',
     component: ConfirmaRecuperarClave
+  },
+  {
+    path: '/confirma-registro',
+    name: 'confirma-registro',
+    component: ConfirmaRegistro
   },
   {
     path: '/perfil',

@@ -2,17 +2,18 @@
 <div>
     <NavBarInicio/>
     <section>
-        <Loading v-if="cargando"/>
-        <div class="card my-card" v-if="!cargando">
+        <div class="card my-card" >
             <div class=card-header>
-                <h2>Recupera tu clave</h2>
+                <h2>Ingresa el token que se envio a tu correo.</h2>
             </div>
             <div class="card-body">
-                <label>
-                    Correo:
-                    <input type="email" v-model="correo" class="form-control"/>
-                </label>
-                <button class="btn btn-primary mb-2" v-on:click="send_correo">Mandar correo</button>
+                <div class="grid">
+                    <label>
+                        Token:
+                        <input type="mail" v-model="token" class="form-control"/>
+                    </label>
+                </div>
+                <button class="btn btn-primary mb-2" v-on:click="send_correo">Finalizar registro</button>
                 <hr>
                 <div class="footer">
                     <router-link to="/registro">Registrarme</router-link>
@@ -20,6 +21,9 @@
                 </div>
             </div>
         </div>
+        <b-modal id="error" :title="titulo_error">
+            <p>{{msj_error}}</p>
+        </b-modal>
     </section>
     </div>
 </template>
@@ -27,35 +31,41 @@
 import axios from 'axios';
 import router from '../router';
 import NavBarInicio from './NavBarInicio.vue';
-import Loading from './Loading.vue';
-import SERVER from '../sites.js'
+import SERVER from '../sites.js';
+import store from '../store/index';
 export default{
-    name: 'RecuperarClave',
+    name: 'ConfrimaRegistro',
     data: function(){
         return {
-            correo: '',
-            cargando: false
+            token: '',
+            titulo_error: '',
+            msj_error: '',
         }
     },
     components:{
-        'NavBarInicio':NavBarInicio,
-        'Loading':Loading
+        'NavBarInicio':NavBarInicio
     },
     methods:{
         send_correo(){
-         this.cargando = true;
          let config = {
             headers: {
-                'charset': 'utf-8',
-                'Content-Type': 'application/json'
+                'Charset': 'utf-8',
+                'Content-Type': 'text/plain'
             }
           }
-          axios.post(SERVER + '/usuario/recupera-clave', this.correo, config).then(() => {
-                router.push("/confirma-recuperar-clave")
-            }).catch(() => {
-                router.push("/confirma-recuperar-clave")
+          axios.post(SERVER + '/usuario/confirma-registro', this.token, config).then(
+              () => {
+                this.msj_error = '';
+                store.commit("set_msj", {msj_title:"Operacion exitosa", msj_body:"Se ha creado " +
+                "tu cuenta, por favor inicia sesion."});
+                router.push("/login")
+            }).catch((error) => {
+                console.log(error.response.status);
+                this.msj_error = error.response.data.Accion;
+                console.log(error.response.data);
+                this.$bvModal.show("error");
+                this.titulo_error = error.response.data.Descripcion;
            });
-
         }
     },
 }
@@ -92,6 +102,12 @@ export default{
       button {
           margin-top: 2%;
       }
+
+      .grid{
+          display: block;
+      }
+
+
       .footer {
           display: flex;
           align-items: center;
