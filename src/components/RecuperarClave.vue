@@ -47,8 +47,8 @@ export default{
          console.log(this.correo);
          let config = {
             headers: {
-                'charset': 'utf-8',
-                'Content-Type': 'application/json'
+                'Charset': 'utf-8',
+                'Content-Type': 'text/plain'
             }
           }
           axios.post(SERVER + '/usuario/recupera-clave', this.correo, config).then(() => {
