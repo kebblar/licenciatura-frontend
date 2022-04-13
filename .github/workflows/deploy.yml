@@ -19,7 +19,7 @@ jobs:
       - name: Build Maven project
         run: |
           mvn package --file ./lib/pom.xml -Dmaven.test.skip
-          mkdir staging && cp target/*.jar staging
+          mkdir staging && cp ./lib/target/*.jar staging
       - name: Set up a cache for Maven
         uses: actions/cache@v2
         with:
@@ -46,6 +46,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   trigger_backend:
+    needs: publish
     runs-on: ubuntu-latest
     steps:
       - name: Trigger backend workflow
