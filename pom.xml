@@ -1,0 +1,24 @@
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>mx.unam.frontend</groupId>
+    <artifactId>licenciatura-frontend</artifactId>
+    <packaging>jar</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <name>licenciatura-frontend</name>
+
+    <dependencies>
+    </dependencies>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <distributionManagement>
+		<repository>
+		  <id>github</id>
+		  <name>GitHub Packages</name>
+		  <url>https://maven.pkg.github.com/kebblar/licenciatura-frontend</url>
+		</repository>
+	  </distributionManagement>
+
+</project>
