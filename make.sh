@@ -7,5 +7,5 @@ npm run build
 
 echo "Preparando creacion del archivo jar..."
 mkdir -p ./lib/src/main/resources
-cp -r dist ./lib/src/main/resources/static
+cp -r ./dist ./lib/src/main/resources/static
 cp pom.xml ./lib
