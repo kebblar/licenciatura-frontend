@@ -42,7 +42,7 @@ jobs:
         with:
             java-version: 1.11
       - name: deploy package
-        run: mvn --batch-mode deploy -Dmaven.test.skip
+        run: mvn --file ./lib/pom.xml --batch-mode deploy -Dmaven.test.skip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   trigger_backend:
