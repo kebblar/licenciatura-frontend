@@ -18,39 +18,34 @@ const routes = [
     component: PantallaInicio
   },
   {
-    path: '/login',
+    path: '/ui/login',
     name: 'login',
     component: Login
   },
   {
-    path: '/registro',
+    path: '/ui/registro',
     name: 'registro',
     component: Registro
   },
   {
-    path: '/acerca-de',
+    path: '/ui/acerca-de',
     name: 'acerca-de',
     component: AcercaDe
   },
   {
-    path: '/recuperar-clave',
+    path: '/ui/recuperar-clave',
     name: 'recuperar-clave',
     component: RecuperarClave
   },
   {
-    path: '/confirma-recuperar-clave',
+    path: '/ui/confirma-recuperar-clave',
     name: 'confirma-recuperar-clave',
     component: ConfirmaRecuperarClave
   },
   {
-    path: '/perfil',
+    path: '/ui/perfil',
     name: 'perfil',
     component: Perfil
-  },
-  {
-    path: '/*',
-    name: '404',
-    component: NotFound
   },
 ]
 

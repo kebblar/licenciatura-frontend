@@ -15,8 +15,8 @@
                 <button class="btn btn-primary mb-2" v-on:click="send_correo">Mandar correo</button>
                 <hr>
                 <div class="footer">
-                    <router-link to="/registro">Registrarme</router-link>
-                    <router-link to="/login">Inicia sesion</router-link>
+                    <router-link to="/ui/registro">Registrarme</router-link>
+                    <router-link to="/ui/login">Inicia sesion</router-link>
                 </div>
             </div>
         </div>
@@ -52,9 +52,9 @@ export default{
             }
           }
           axios.post(SERVER + '/usuario/recupera-clave', this.correo, config).then(() => {
-                router.push("/confirma-recuperar-clave")
+                router.push("/ui/confirma-recuperar-clave")
             }).catch(() => {
-                router.push("/confirma-recuperar-clave")
+                router.push("/ui/confirma-recuperar-clave")
            });
 
         }

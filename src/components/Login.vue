@@ -19,8 +19,8 @@
                 <button class="btn btn-primary mb-2" v-on:click="login">Iniciar sesion</button>
                 <hr>
                 <div class="footer">
-                    <router-link to="/registro">Registrarme</router-link>
-                    <router-link to="/recuperar-clave">Olvide mi clave</router-link>
+                    <router-link to="/ui/registro">Registrarme</router-link>
+                    <router-link to="/ui/recuperar-clave">Olvide mi clave</router-link>
                 </div>
             </div>
         </div>
@@ -80,7 +80,7 @@ export default{
                 store.commit("set_jwt", response.data.jwt);
                 console.log(store.state.jwt);
                 this.msj_error = '';
-                router.push("/perfil")
+                router.push("/ui/perfil")
             }).catch(error => {
                 console.log(error.response.status);
                 this.msj_error = error.response.data.Accion;
