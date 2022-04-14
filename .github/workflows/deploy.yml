@@ -41,6 +41,9 @@ jobs:
         uses: actions/setup-java@v1
         with:
             java-version: 1.11
+      - name: prepare node
+        run: |
+          ./make.sh
       - name: deploy package
         run: mvn --file ./lib/pom.xml --batch-mode deploy -Dmaven.test.skip
         env:
