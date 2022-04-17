@@ -13,6 +13,10 @@ jobs:
         uses: actions/setup-java@v1
         with:
             java-version: 1.11
+      - name: Install node
+        uses: actions/setup-node@master
+      - name: Install dependencies
+        run: npm install
       - name: prepare node
         run: |
           ./make.sh
@@ -41,8 +45,15 @@ jobs:
         uses: actions/setup-java@v1
         with:
             java-version: 1.11
+      - name: Install node
+        uses: actions/setup-node@master
+      - name: Install dependencies
+        run: npm install
+      - name: prepare node
+        run: |
+          ./make.sh
       - name: deploy package
-        run: mvn --batch-mode deploy -Dmaven.test.skip
+        run: mvn --file ./lib/pom.xml --batch-mode deploy -Dmaven.test.skip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   trigger_backend:
