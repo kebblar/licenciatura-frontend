@@ -7,6 +7,7 @@ import AcercaDe from '../components/AcercaDe.vue'
 import RecuperarClave from '../components/RecuperarClave.vue'
 import ConfirmaRecuperarClave from '../components/ConfirmaRecuperarClave.vue'
 import Perfil from '../components/Perfil.vue'
+import NotFound from '../components/NotFound.vue'
 
 Vue.use(VueRouter)
 
@@ -45,6 +46,11 @@ const routes = [
     path: '/ui/perfil',
     name: 'perfil',
     component: Perfil
+  },
+  {
+    path: '/*',
+    name: 'NotFound',
+    component: NotFound
   },
 ]
 
