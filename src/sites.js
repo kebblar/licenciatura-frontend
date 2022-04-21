@@ -1,4 +1,4 @@
-//const SERVER = 'http://localhost:8080'
-const SERVER = 'http://54.163.109.221:56061/';
+//const SERVER = 'http://localhost:8080/api'
+const SERVER = 'https://licenciatura-proyecto.ml/api';
 
 export default SERVER;
