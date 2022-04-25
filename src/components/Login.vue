@@ -54,13 +54,6 @@ export default{
     components:{
         'NavBarInicio':NavBarInicio
     },
-    created() {
-      
-      if (store.state.jwt) {
-        //router.push("/perfil")
-      }
-      
-    },
     mounted(){
         if (store.state.msj_body){
           this.titulo_aviso = store.state.msj_title
