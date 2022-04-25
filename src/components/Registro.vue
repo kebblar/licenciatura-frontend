@@ -132,7 +132,7 @@ export default{
                 "telefono": this.telefono
             }).then(() => {
                 this.msj_error = '';
-                router.push("/confirma-registro")
+                router.push("/ui/confirma-registro")
             }).catch((error) => {
                 console.log(error.response.status);
                 this.msj_error = error.response.data.Accion;
