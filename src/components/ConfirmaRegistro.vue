@@ -58,7 +58,7 @@ export default{
                 this.msj_error = '';
                 store.commit("set_msj", {msj_title:"Operacion exitosa", msj_body:"Se ha creado " +
                 "tu cuenta, por favor inicia sesion."});
-                router.push("/login")
+                router.push("/ui/login")
             }).catch((error) => {
                 console.log(error.response.status);
                 this.msj_error = error.response.data.Accion;
