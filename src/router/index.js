@@ -7,11 +7,8 @@ import AcercaDe from '../components/AcercaDe.vue'
 import RecuperarClave from '../components/RecuperarClave.vue'
 import ConfirmaRecuperarClave from '../components/ConfirmaRecuperarClave.vue'
 import Perfil from '../components/Perfil.vue'
-<<<<<<< HEAD
 import ConfirmaRegistro from '../components/ConfirmaRegistro.vue'
-=======
 import NotFound from '../components/NotFound.vue'
->>>>>>> develop
 
 Vue.use(VueRouter)
 
@@ -47,16 +44,12 @@ const routes = [
     component: ConfirmaRecuperarClave
   },
   {
-<<<<<<< HEAD
-    path: '/confirma-registro',
+    path: '/ui/confirma-registro',
     name: 'confirma-registro',
     component: ConfirmaRegistro
   },
   {
-    path: '/perfil',
-=======
     path: '/ui/perfil',
->>>>>>> develop
     name: 'perfil',
     component: Perfil
   },
