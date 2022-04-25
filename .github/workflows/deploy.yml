@@ -13,10 +13,17 @@ jobs:
         uses: actions/setup-java@v1
         with:
             java-version: 1.11
+      - name: Install node
+        uses: actions/setup-node@master
+      - name: Install dependencies
+        run: npm install
+      - name: prepare node
+        run: |
+          ./make.sh
       - name: Build Maven project
         run: |
           mvn package --file ./lib/pom.xml -Dmaven.test.skip
-          mkdir staging && cp target/*.jar staging
+          mkdir staging && cp ./lib/target/*.jar staging
       - name: Set up a cache for Maven
         uses: actions/cache@v2
         with:
@@ -38,11 +45,21 @@ jobs:
         uses: actions/setup-java@v1
         with:
             java-version: 1.11
+      - name: Install node
+        uses: actions/setup-node@master
+      - name: Install dependencies
+        run: npm install
+      - name: prepare node
+        run: |
+          ./make.sh
       - name: deploy package
-        run: mvn --batch-mode deploy -Dmaven.test.skip
+        run: mvn --file ./lib/pom.xml --batch-mode deploy -Dmaven.test.skip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   trigger_backend:
-    name: Trigger backend workflow
-    run: |
-      curl -XPOST -u "${{ secrets.PAT_USERNAME}}:${{secrets.PAT_TOKEN}}" -H "Accept: application/vnd.github.everest-preview+json" -H "Content-Type: application/json" https://api.github.com/repos/kebblar/licenciatura-backend/dispatches --data '{"event_type": "build_application"}'
+    needs: publish
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger backend workflow
+        run: |
+          curl -XPOST -u "${{ secrets.PAT_USERNAME}}:${{secrets.PAT_TOKEN}}" -H "Accept: application/vnd.github.everest-preview+json" -H "Content-Type: application/json" https://api.github.com/repos/kebblar/licenciatura-backend/dispatches --data '{"event_type": "build_application"}'

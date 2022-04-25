@@ -6,7 +6,7 @@
         <div class="jumbotron">
             <div class="container">
             <h1>     Conecta con las personas</h1>
-            <router-link class="btn-main" to="/registro">Registrarse</router-link>
+            <router-link class="btn-main" to="/ui/registro">Registrarse</router-link>
             </div>
         </div>
         </main>
