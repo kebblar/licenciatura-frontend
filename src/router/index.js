@@ -9,6 +9,8 @@ import ConfirmaRecuperarClave from '../components/ConfirmaRecuperarClave.vue'
 import Perfil from '../components/Perfil.vue'
 import ConfirmaRegistro from '../components/ConfirmaRegistro.vue'
 import NotFound from '../components/NotFound.vue'
+import store from '../store'
+import axios from 'axios';
 
 Vue.use(VueRouter)
 
@@ -51,7 +53,8 @@ const routes = [
   {
     path: '/ui/perfil',
     name: 'perfil',
-    component: Perfil
+    component: Perfil,
+    meta: { allowedRoles: ['USUARIO'] }
   },
   {
     path: '/*',
@@ -63,6 +66,46 @@ const routes = [
 const router = new VueRouter({
   routes,
   mode: 'history'
+})
+
+
+function parseJwt(token) {
+  var base64Url = token.split('.')[1];
+  var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+  }).join(''));
+  return JSON.parse(jsonPayload);
+}
+
+function checaJwt() {
+  var jwt = store.state.jwt;
+  if (jwt && jwt !== undefined && jwt.length > 0) {
+    
+      const jwtPayload = parseJwt(jwt);
+      const limite = (Date.now() / 1000)-(2*60);
+      if (jwtPayload.exp < limite) {
+        store.commit('set_jwt', '');
+      }
+  }
+}
+
+router.beforeEach((to, _from, next) => {
+
+  axios.defaults.headers.common = {"X-CSRFToken": store.state.jwt};
+  axios.defaults.headers.common = {"jwt": store.state.jwt};
+  checaJwt();
+
+
+  if (to.matched.some(record => record.meta.allowedRoles )) { 
+    // NO estás autenticado actualmente:
+    if (store.state.jwt==='') {
+      store.commit("set_msj",{"msj_title":"Sesion expirada", "msj_body":"Por favor vuelve a iniciar sesion"})
+      router.push("/ui/login");
+      return;
+    }
+  }
+  next(); // *** El recurso NO requiere autenticación
 })
 
 export default router
