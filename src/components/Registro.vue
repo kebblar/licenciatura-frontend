@@ -47,8 +47,8 @@
                 <button class="btn btn-primary mb-2" v-on:click="send_correo">Mandar correo</button>
                 <hr>
                 <div class="footer">
-                    <router-link to="/registro">Registrarme</router-link>
-                    <router-link to="/login">Inicia sesion</router-link>
+                    <router-link to="/ui/registro">Registrarme</router-link>
+                    <router-link to="/ui/login">Inicia sesion</router-link>
                 </div>
             </div>
         </div>
