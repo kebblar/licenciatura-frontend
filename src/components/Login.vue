@@ -71,6 +71,7 @@ export default{
                 clave: this.clave,
           }).then(response => {
                 store.commit("set_jwt", response.data.jwt);
+                store.commit("set_id", response.data.id);
                 console.log(store.state.jwt);
                 this.msj_error = '';
                 router.push("/ui/perfil")

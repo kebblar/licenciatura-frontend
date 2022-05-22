@@ -16,12 +16,16 @@ const vuexLocalStorage = new VuexPersist({
 const store = new Vuex.Store({
   state: {
     jwt: "",
+    id: "",
     msj_title: "",
     msj_body: "",
   },
   mutations: {
     set_jwt (state, jwt) {
       state.jwt = jwt;
+    },
+    set_id (state, id) {
+      state.id = id;
     },
     set_msj(state, mensaje){
       state.msj_title = mensaje.msj_title
