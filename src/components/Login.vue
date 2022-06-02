@@ -70,10 +70,11 @@ export default{
                 mail: this.correo,
                 clave: this.clave,
           }).then(response => {
-                store.commit("set_jwt", response.data.jwt);
+                store.commit("set_jwt", response.data.jwt);//setea el valor del jwt segun lo que nos respondió el servidor
+                store.commit("set_id", response.data.id);
                 console.log(store.state.jwt);
                 this.msj_error = '';
-                router.push("/ui/perfil")
+                router.push("/ui/feed")//aqui cambiar a noticias
             }).catch(error => {
                 console.log(error.response.status);
                 this.msj_error = error.response.data.Accion;

@@ -9,6 +9,8 @@ import ConfirmaRecuperarClave from '../components/ConfirmaRecuperarClave.vue'
 import Perfil from '../components/Perfil.vue'
 import ConfirmaRegistro from '../components/ConfirmaRegistro.vue'
 import NotFound from '../components/NotFound.vue'
+import Publicacion from '../components/Publicacion.vue'
+import Feed from '../components/Feed.vue'
 import store from '../store'
 import axios from 'axios';
 
@@ -57,10 +59,20 @@ const routes = [
     meta: { allowedRoles: ['USUARIO'] }
   },
   {
+    path: '/ui/publicacion',
+    name: 'publicacion',
+    component: Publicacion
+  },
+  {
+    path: '/ui/feed',
+    name: 'feed',
+    component: Feed
+  },
+  {
     path: '/*',
     name: 'NotFound',
     component: NotFound
-  },
+  }, 
 ]
 
 const router = new VueRouter({
