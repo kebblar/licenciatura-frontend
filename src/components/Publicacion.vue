@@ -45,9 +45,9 @@
                         <div class="b_mod">
                             <b-button @click="$bvModal.show('modal-video')" class="btn btn-primary mb-2">Video</b-button>
                         </div>
-                        <div class="b_mod">
+                        <!-- <div class="b_mod">
                             <b-button @click="$bvModal.show('modal-gif')" class="btn btn-primary mb-2">Gif</b-button>
-                        </div>
+                        </div> -->
                         
                     </b-modal>
                     <b-modal id="modal-imagen" centered title="Selecciona el tipo de fuente de tu contenido multimedia" hide-footer>
@@ -76,6 +76,7 @@
                         </template>
                         <div class="b_mod">
                             <input type="file" id="selector-videos" multiple @change="crearMetaData($event.target.files)" accept="video/*"  class="btn btn-primary mb-2">
+                            <br/><img id="output" width="50"/>
                         </div>
                         <div class="b_mod">
                             <b-button>Elegir del perfil</b-button>
@@ -101,18 +102,9 @@
                     <label class="b_publicar">
                         <button class="btn btn-primary mb-2" v-on:click="publicar">Publicar</button>
                     </label>
-                    
-                    
                 </div>
             </div>
         </div>
-        
-        <!-- <b-modal id="error" :title="titulo_error">
-            <p>{{msj_error}}</p>
-        </b-modal>
-        <b-modal id="aviso" :title="titulo_aviso" @hidden="borrarMensaje">
-            <p>{{body_aviso}}</p>
-        </b-modal> -->
     </section>
     <!--eetiqueta input, file en html y eso mandarlo al scripy hacer un evento, una interaccion entre el navegador. @change, le paso una funcion que 
     //se ejecute cuando el usuario suba el archivo from data, objeto de js-->
@@ -186,9 +178,9 @@ export default {
                 this.$bvModal.show("error");
                 this.titulo_error = error.response.data.Descripcion;
             });
-            for(let i = 0; i < this.lista.length; i++){
-                axios.post(SERVER + 'feed/multimedia/', this.lista[i]
-                ).then(response => {
+            for(let i = 0; i < this.lista.length; i++) {
+                axios.post(SERVER + 'feed/multimedia/', this.lista[i])
+                .then(response => {
                         store.commit("set_jwt", response.data.jwt);
                         console.log(store.state.jwt);
                     }).catch(error => {
@@ -202,10 +194,10 @@ export default {
                 for(var index = 0; index < this.multimedia.length; index++) {
                     formData.append("files", this.multimedia[index]);
                 }
-                var xhr = new XMLHttpRequest();
-                xhr.open("POST", SERVER+"files/uploadMultipleFiles/");
-                xhr.send(formData);
             }
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", SERVER+"files/uploadMultipleFiles/");
+            xhr.send(formData);
         },
         toggle() {
             this.es_publica = !this.es_publica;
@@ -213,21 +205,26 @@ export default {
         cerrar() {
             router.push("/ui/feed");
         },
-        crearMetaData(fileList){
+        crearMetaData(fileList) {
             this.conteo = fileList.length;
             for (let i = 0; i < fileList.length; i++) {
                 var esVideoTmp = "false";
                 if(fileList[i].type == "imagenes/*"){
                     esVideoTmp = "true";
                 }
-                this.lista.push({
+                this.lista.push({ 
                     multimediaId: "null",
-                    publicacionId: 1,//id de la publicacion 
+                    publicacionId: 8,//id de la publicacion 
                     usuarioCreadorId: store.state.id,
                     multimedia: fileList[i].name,
                     esVideo: esVideoTmp //+ nombre.img
                 });
-                this.multimedia = fileList;
+                this.multimedia = fileList; 
+                var output = document.getElementById('output');
+                output.src = URL.createObjectURL(fileList[0]);
+                output.onload = function() {
+                URL.revokeObjectURL(output.src) // free memory
+                };
             }
         }
     }
