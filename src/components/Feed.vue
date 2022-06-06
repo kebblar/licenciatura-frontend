@@ -10,7 +10,7 @@
     </div>
     <div class="align-items-center">
         <b-list-group>
-            <b-list-group-item class="align-items-center" v-for="publicacion in publicaciones_obtenidas_f" :key="publicacion.fechaCreacion">
+            <b-list-group-item class="elemento" v-for="publicacion in publicaciones_obtenidas_f" :key="publicacion.fechaCreacion">
                 <div class="card">
                     <div class="publicacion-fondo">
                         <div class="publicacion-fondo-hijo-1">
@@ -23,12 +23,15 @@
                     </div>
                     <div>
                         <h4>{{publicacion.textoPlano}}</h4>
+                        <!-- {{publicacion.multimedia[1]}} -->
+                        
                     </div>
                     <div>
+                        
                         <div class=comentar_padre>
                             <button class="comentar" @click="toggle(publicacion.id)">Comentar</button>
                         </div>
-                        
+                        {{l_p_c_comentarios_d.get(publicacion.id)}}
                         <div v-if="comentar">
                             <div class=comentar_padre>
                                 <b-form-textarea type="text" v-model="comentario"  size="lg" placeholder="Escribe un comentario"></b-form-textarea>
@@ -44,6 +47,8 @@
                                     <h4>{{comentario.comentario}}</h4>
                                 </div>
                             </div>
+                            AAAAAAAAAAAAAAAAA
+                            <!-- {{publicacion.multimedia[1]}} -->
                         </div>
                     </div>
                 </div>
@@ -73,7 +78,8 @@ export default {
             // l_comentarios: Object,
             lista_comentarios: Object,
             publicacion_actual: 0,
-            usuario: ""
+            usuario: "",
+            l_p_c_comentarios_d: new Map()
         }
     },
     methods: {
@@ -89,16 +95,50 @@ export default {
                 console.log("CHIIIN")
                 console.log(response);
                 this.publicaciones_obtenidas = response.data;
-                this.publicaciones_obtenidas_f = response.data;
+                this.publicaciones_obtenidas_f = response.data.reverse();
                 for(let i = 0; i < this.publicaciones_obtenidas_f.length; i++){
                     axios.get(SERVER + 'feed/comentario?publicacion_id='+this.publicaciones_obtenidas_f[i].id
                     ).then(respuesta => {
                         this.publicaciones_obtenidas_f[i].comentarios = respuesta.data;
+                        this.publicaciones_obtenidas_f[i].c_desplegados = false;
+                        this.l_p_c_comentarios_d.set(this.publicaciones_obtenidas_f[i].id,false);
+                        console.log("AYUDAAAAAAAAA");
+                        console.log(this.l_p_c_comentarios_d.get(this.publicaciones_obtenidas_f[i].id));
                         console.log(this.publicaciones_obtenidas_f[i]);
                     }).catch(error => {
                         console.log(error);
                     });
-                    
+                    axios.get(SERVER + '/feed/multimedia/?multimedia_id='+this.publicaciones_obtenidas_f[i].id
+                    ).then(res => {
+                        // this.publicaciones_obtenidas_f[i].comentarios = respuesta.data;
+                        // this.publicaciones_obtenidas_f[i].c_desplegados = false;
+                        // this.l_p_c_comentarios_d.set(this.publicaciones_obtenidas_f[i].id,false);
+                        // console.log("AYUDAAAAAAAAA");
+                        // console.log(this.l_p_c_comentarios_d.get(this.publicaciones_obtenidas_f[i].id));
+                        // console.log(this.publicaciones_obtenidas_f[i]);
+                        console.log("PRUEBAAAA");
+                        console.log(res);
+                        let objetos_multimedia = res.data;
+                        let l_multi_temp = [];
+                        for(let j = 0; j < objetos_multimedia.length; j++){
+                            console.log("DENTRO DEL SEGUNDO FOR");
+                            console.log(objetos_multimedia[j]);
+                            axios.get(SERVER + '/files/' + objetos_multimedia[j].multimedia
+                            ).then(m_respuesta => {
+                                console.log(m_respuesta);
+                                let url = URL.createObjectURL(m_respuesta.data);
+                                l_multi_temp.push(url);
+                                
+                                console.log("AAAA 2");
+                                console.log(this.publicaciones_obtenidas_f[i]);
+                            }).catch(error => {
+                                console.log(error);
+                            });
+                        }
+                        this.publicaciones_obtenidas_f[i].multimedia = l_multi_temp;
+                    }).catch(error => {
+                        console.log(error);
+                    });
                 }
             }).catch(error => {
                 //los errores
@@ -142,7 +182,7 @@ export default {
                 fechaCreacion: fecha
             }).then(response => {
                 console.log(response);
-                console.log("El comentario fue agregado pasó")
+                console.log("El comentario fue agregado pasó");
                 // router.push("/ui/feed");
                 location.reload();
                 router.go(0);
@@ -151,13 +191,23 @@ export default {
             });
         },
         toggle(id) {
+            let i = this.publicaciones_obtenidas_f.length-id;
+            // this.publicaciones_obtenidas_f[i].c_desplegados = !this.publicaciones_obtenidas_f[i].c_desplegados;
+            let anterior = this.l_p_c_comentarios_d.get(this.publicaciones_obtenidas_f[i].id);
+            this.l_p_c_comentarios_d.set(this.publicaciones_obtenidas_f[i].id,!anterior);
+            
             this.comentar = !this.comentar;
-            this.publicacion_actual = id;
-            console.log("TOGLE ID:");
+            console.log("TOGGLE: ");
+            // this.publicacion_actual = id;
+            // console.log("TOGLE ID:");
             console.log(id);
+            console.log(this.l_p_c_comentarios_d.get(this.publicaciones_obtenidas_f[i].id));
         },
         recargar(){
             router.push("/ui/feed");
+        },
+        calcula(id){
+            return this.l_p_c_comentarios_d.get(id);
         }
     },
     created: function () {
@@ -185,16 +235,18 @@ html, body {
   border-radius: 5px;
 }
 
-.card:hover {
+/* .card:hover {
   box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
   padding-bottom: 50px;
-}
+} */
 
 img {
   border-radius: 5px 5px 0 0;
 }
-.logo{
-    background-image: url("https://e7.pngegg.com/pngimages/808/119/png-clipart-atom-github-visual-studio-code-text-editor-computer-icons-github-text-logo.png");
+.elemento{
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .btn_publicar {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
