@@ -137,7 +137,9 @@ export default {
             b_publica: '',
             dialog_multimedia: false,
             lista: [],
-            multimedias: []
+            multimedia: [],
+            listaAux: [],
+            conteo: 0
         }
         //que son los componentres, ps los otros componentes que tengo en la carpeta components
     },
@@ -163,102 +165,47 @@ export default {
                 dia = '0' + dia
             }
             var fecha = f.getFullYear() + "-" + mes + "-" + dia + " " + f.getHours() + ':' + f.getMinutes() + ':' + f.getSeconds();
-        axios.post(SERVER + '/feed/publicacion/', {
-            id: "null",
-            usuarioId: store.state.id,
-            textoPlano: this.texto,
-            fechaCreacion: fecha,
-            esPublica: this.es_publica
-        }).then(response => {
-            //que significa esto en el archivo original
-            //promesa, es lo que va a hacer esta madre cuando el sercidor responda
-            store.commit("set_jwt", response.data.jwt);//setea el valor del jwt segun lo que nos respondió el servidor
-            console.log(store.state.jwt);
-            router.push("/ui/feed")
-        }).catch(error => {
-            //los errores
-            router.push("/ui/publicacion")
-            console.log(error.response.status);
-            this.msj_error = error.response.data.Accion;
-            console.log(error.response.data);
-            this.$bvModal.show("error");
-            this.titulo_error = error.response.data.Descripcion;
-        });
-        // var fileList = document.getElementById('selector-imagenes');
-
-        // var files = fileList.files
-        // console.log("CHINGA TU MADRE")
-        // console.log(files)
-        // axios.put(SERVER, formData, 
-        // { headers: 
-        //         {'Content-Type': `multipart/form-data; boundary=${formData._boundary}`
-        //         }}).then(response => {
-        //         console.log(response);
-        //     }).catch(error => {
-        //         console.log(error.response.status);
-        //         console.log(error.response.data);
-        //    });
-        
-        // axios.post(SERVER + '/feed/multimedia/', {
-        //         multimediaId: "null",
-        //         publicacionId: 1,//id de la publicacion 
-        //         usuarioCreadorId: store.state.id,
-        //         multimedia: '',
-        //         esVideo: "false" //+ nombre.img
-        //   },files
-        // console.log("Si se muestra");
-        // console.log(this.multimedias);
-        // console.log(this.multimedias[0]);
-        // console.log(this.multimedias[1]);
-        // if(this.muldimedias.length != 0){
-        console.log("No funciono 1");
-        console.log(this.lista.lenght);
-        for(let i = 0; i < this.lista.length; i++){
-            console.log("No funciono");
-            console.log(this.lista[i]);
-            axios.post(SERVER + 'feed/multimedia/', this.lista[i]
-            ).then(response => {
-                    store.commit("set_jwt", response.data.jwt);
-                    console.log(store.state.jwt);
-                }).catch(error => {
-                    console.log(error.response.status);
-                    this.msj_error = error.response.data.Accion;
-                    console.log(error.response.data);
-                    this.$bvModal.show("error");
-                    this.titulo_error = error.response.data.Descripcion;
+            axios.post(SERVER + '/feed/publicacion/', {
+                id: "null",
+                usuarioId: store.state.id,
+                textoPlano: this.texto,
+                fechaCreacion: fecha,
+                esPublica: this.es_publica
+            }).then(response => {
+                //que significa esto en el archivo original
+                //promesa, es lo que va a hacer esta madre cuando el sercidor responda
+                store.commit("set_jwt", response.data.jwt);//setea el valor del jwt segun lo que nos respondió el servidor
+                console.log(store.state.jwt);
+                router.push("/ui/feed")
+            }).catch(error => {
+                //los errores
+                router.push("/ui/publicacion")
+                console.log(error.response.status);
+                this.msj_error = error.response.data.Accion;
+                console.log(error.response.data);
+                this.$bvModal.show("error");
+                this.titulo_error = error.response.data.Descripcion;
             });
-            console.log(this.multimedias[i]);
-            axios.put(SERVER + 'feed/multimedia/', {
-                // id: ,
-                multimedia: this.multimedias[i]
+            for(let i = 0; i < this.lista.length; i++){
+                axios.post(SERVER + 'feed/multimedia/', this.lista[i]
+                ).then(response => {
+                        store.commit("set_jwt", response.data.jwt);
+                        console.log(store.state.jwt);
+                    }).catch(error => {
+                        console.log(error.response.status);
+                        this.msj_error = error.response.data.Accion;
+                        console.log(error.response.data);
+                        this.$bvModal.show("error");
+                        this.titulo_error = error.response.data.Descripcion;
+                });
+                var formData = new FormData();
+                for(var index = 0; index < this.multimedia.length; index++) {
+                    formData.append("files", this.multimedia[index]);
+                }
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", SERVER+"files/uploadMultipleFiles/");
+                xhr.send(formData);
             }
-            ).then(response => {
-                    store.commit("set_jwt", response.data.jwt);
-                    console.log(store.state.jwt);
-                }).catch(error => {
-                    console.log(error.response.status);
-                    this.msj_error = error.response.data.Accion;
-                    console.log(error.response.data);
-                    this.$bvModal.show("error");
-                    this.titulo_error = error.response.data.Descripcion;
-            });
-        }
-        // axios.post(SERVER + '/feed/multimedia/', {
-        //     lista: this.lista,
-        //     multimedias: this.multimedias
-        //     }
-        // ).then(response => {
-        //         store.commit("set_jwt", response.data.jwt);
-        //         console.log(store.state.jwt);
-        //     }).catch(error => {
-        //         console.log(error.response.status);
-        //         this.msj_error = error.response.data.Accion;
-        //         console.log(error.response.data);
-        //         this.$bvModal.show("error");
-        //         this.titulo_error = error.response.data.Descripcion;
-        // });
-        // }
-        
         },
         toggle() {
             this.es_publica = !this.es_publica;
@@ -267,10 +214,8 @@ export default {
             router.push("/ui/login")
         },
         crearMetaData(fileList){
-            // console.log(fileList.length);
+            this.conteo = fileList.length;
             for (let i = 0; i < fileList.length; i++) {
-                // console.log("CHANGOS")
-                // console.log(fileList[i].name);
                 var esVideoTmp = "false";
                 if(fileList[i].type == "imagenes/*"){
                     esVideoTmp = "true";
@@ -282,23 +227,10 @@ export default {
                     multimedia: fileList[i].name,
                     esVideo: esVideoTmp //+ nombre.img
                 });
-            }
-            // this.multimedias = fileList;
-            for (let i = 0; i < fileList.length; i++) {
-                const formData = new FormData();
-                formData.append("file", fileList[i], fileList[i].name);
-                this.multimedias.push(formData);
-            }
-            console.log(this.lista)
-            for (let i = 0; i < fileList.length; i++) {
-                console.log(this.lista[i]);
+                this.multimedia = fileList;
             }
         }
-        // c_multimedia(){
-            
-        // }
     }
-    //cuadno guardemos imagenes es ap.destination, pedimos como /nombre.imagen
 }
 //como correr la aplicacion npm run serve desde terminal
 //un componente por cada ventana? no
