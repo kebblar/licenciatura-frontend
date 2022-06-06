@@ -211,7 +211,7 @@ export default {
             this.es_publica = !this.es_publica;
         },
         cerrar() {
-            router.push("/ui/login")
+            router.push("/ui/feed");
         },
         crearMetaData(fileList){
             this.conteo = fileList.length;
