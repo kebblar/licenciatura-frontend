@@ -23,15 +23,23 @@
                     </div>
                     <div>
                         <h4>{{publicacion.textoPlano}}</h4>
-                        <!-- {{publicacion.multimedia[1]}} -->
-                        
-                    </div>
-                    <div>
                         
                         <div class=comentar_padre>
-                            <button class="comentar" @click="toggle(publicacion.id)">Comentar</button>
+                            <button class="comentar" @click="togle2()">Mostrar imagenes</button>
                         </div>
-                        {{l_p_c_comentarios_d.get(publicacion.id)}}
+                        <b-list-group v-show="mostrar_imagenes">
+                            <b-list-group-item v-for="imagen in publicacion.urls" :key="imagen">
+                                {{imagen}}
+                                <img v-bind:src="require(imagen)" alt="">
+                            </b-list-group-item>
+                        </b-list-group>
+                    </div>
+
+                    <div>
+                        <div class=comentar_padre>
+                            <button class="comentar" @click="togle()">Comentar</button>
+                        </div>
+                        
                         <div v-if="comentar">
                             <div class=comentar_padre>
                                 <b-form-textarea type="text" v-model="comentario"  size="lg" placeholder="Escribe un comentario"></b-form-textarea>
@@ -79,7 +87,9 @@ export default {
             lista_comentarios: Object,
             publicacion_actual: 0,
             usuario: "",
-            l_p_c_comentarios_d: new Map()
+            l_p_c_comentarios_d: new Map(),
+            urls: [],
+            mostrar_imagenes: false
         }
     },
     methods: {
@@ -101,6 +111,7 @@ export default {
                     ).then(respuesta => {
                         this.publicaciones_obtenidas_f[i].comentarios = respuesta.data;
                         this.publicaciones_obtenidas_f[i].c_desplegados = false;
+                        this.publicaciones_obtenidas_f[i].urls = [];
                         this.l_p_c_comentarios_d.set(this.publicaciones_obtenidas_f[i].id,false);
                         console.log("AYUDAAAAAAAAA");
                         console.log(this.l_p_c_comentarios_d.get(this.publicaciones_obtenidas_f[i].id));
@@ -121,16 +132,28 @@ export default {
                         let objetos_multimedia = res.data;
                         let l_multi_temp = [];
                         for(let j = 0; j < objetos_multimedia.length; j++){
+                            
                             console.log("DENTRO DEL SEGUNDO FOR");
                             console.log(objetos_multimedia[j]);
-                            axios.get(SERVER + '/files/' + objetos_multimedia[j].multimedia
+                            axios.get(SERVER + '/files/archivos'
                             ).then(m_respuesta => {
-                                console.log(m_respuesta);
-                                let url = URL.createObjectURL(m_respuesta.data);
-                                l_multi_temp.push(url);
+                                console.log("AAAAAAAAAAAAAAAAAAAA 2");
+                                console.log(m_respuesta.data);
+                                let archivos = m_respuesta.data;
+                                for(let k = 0; k < archivos.length; k++){
+                                    if (archivos[k].nombre == objetos_multimedia[j].multimedia){
+                                        this.urls.push(archivos[k].url);
+                                        this.publicaciones_obtenidas_f[i].urls.push(archivos[k].ruta);
+                                        console.log(i);
+                                        console.log(this.publicaciones_obtenidas_f[i].urls);
+                                    }
+                                }
+                                // let url = URL.createObjectURL(m_respuesta.data);
+                                // l_multi_temp.push(url);
                                 
-                                console.log("AAAA 2");
-                                console.log(this.publicaciones_obtenidas_f[i]);
+                                // console.log("AAAA 2");
+                                //console.log(this.publicaciones_obtenidas_f[i]);
+                            
                             }).catch(error => {
                                 console.log(error);
                             });
@@ -140,6 +163,8 @@ export default {
                         console.log(error);
                     });
                 }
+                console.log("----------------->Los urls son:");
+                console.log(this.urls);
             }).catch(error => {
                 //los errores
                 router.push("/ui/publicacion")
@@ -190,18 +215,28 @@ export default {
                 console.log(error);
             });
         },
-        toggle(id) {
-            let i = this.publicaciones_obtenidas_f.length-id;
-            // this.publicaciones_obtenidas_f[i].c_desplegados = !this.publicaciones_obtenidas_f[i].c_desplegados;
-            let anterior = this.l_p_c_comentarios_d.get(this.publicaciones_obtenidas_f[i].id);
-            this.l_p_c_comentarios_d.set(this.publicaciones_obtenidas_f[i].id,!anterior);
+        togle() {
+            // let i = this.publicaciones_obtenidas_f.length-id;
+            //this.publicaciones_obtenidas_f[i].c_desplegados = !this.publicaciones_obtenidas_f[i].c_desplegados;
+            // let anterior = this.l_p_c_comentarios_d.get(this.publicaciones_obtenidas_f[i].id);
+            // this.l_p_c_comentarios_d.set(this.publicaciones_obtenidas_f[i].id,!anterior);
             
             this.comentar = !this.comentar;
-            console.log("TOGGLE: ");
-            // this.publicacion_actual = id;
+
+            // this.$nextTick(function() {
+            //     this.publicaciones_obtenidas_f[i].c_desplegados = !this.publicaciones_obtenidas_f[i].c_desplegados;
+                
+            // });
+            // console.log("TOGGLE: ");
+            // // this.publicacion_actual = id;
             // console.log("TOGLE ID:");
-            console.log(id);
-            console.log(this.l_p_c_comentarios_d.get(this.publicaciones_obtenidas_f[i].id));
+            // console.log(id);
+            console.log(this.comentar);
+            // //console.log(this.l_p_c_comentarios_d.get(this.publicaciones_obtenidas_f[i].id));
+            // console.log(this.publicaciones_obtenidas_f[i].c_desplegados);
+        },
+        togle2() {
+            this.mostrar_imagenes = !this.mostrar_imagenes;
         },
         recargar(){
             router.push("/ui/feed");
@@ -215,10 +250,10 @@ export default {
         // window.addEventListener('click', this.obtener_comentarios(this.publicacion_actual));
     },
 
-    destroyed: function () {
-        window.removeEventListener('pageshow', this.getPublicaciones);
-        // window.addEventListener('click', this.obtener_comentarios(this.publicacion_actual));
-    }
+    // destroyed: function () {
+    //     window.removeEventListener('pageshow', this.getPublicaciones);
+    //     // window.addEventListener('click', this.obtener_comentarios(this.publicacion_actual));
+    // }
 }
 </script>
 
