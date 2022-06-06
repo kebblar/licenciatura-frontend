@@ -4,6 +4,7 @@
             <li><router-link to="/">Inicio</router-link></li>
             <li><router-link to="/ui/login">Iniciar sesion</router-link></li>
             <li><router-link to="/ui/registro">Registrarse</router-link></li>
+            <li><router-link to="/ui/feed">Feed</router-link></li>
             <li style="float:right"><router-link to="/ui/acerca-de">Acerca de</router-link></li>
         </ul>
     </header>

@@ -1,5 +1,6 @@
 <template>
     <div>
+        <NavBarInicio/> 
     <div>
         <div class=card-header>
             <h2>Noticias</h2>
@@ -55,7 +56,6 @@
                                     <h4>{{comentario.comentario}}</h4>
                                 </div>
                             </div>
-                            AAAAAAAAAAAAAAAAA
                             <!-- {{publicacion.multimedia[1]}} -->
                         </div>
                     </div>
@@ -74,6 +74,7 @@ import router from '../router';
 import axios from 'axios';
 import SERVER from '../sites.js'
 import store from '../store/index';
+import NavBarInicio from './NavBarInicio.vue';
 export default {
     name: 'Feed',
     data: function(){
@@ -91,6 +92,8 @@ export default {
             urls: [],
             mostrar_imagenes: false
         }
+    }, components:{
+        'NavBarInicio':NavBarInicio
     },
     methods: {
         publicar() {
