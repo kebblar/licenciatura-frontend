@@ -24,14 +24,15 @@
                     </div>
                     <div>
                         <h4>{{publicacion.textoPlano}}</h4>
+                        <p>{{publicacion}}</p>
                         
                         <div class=comentar_padre>
                             <button class="comentar" @click="togle2()">Mostrar imagenes</button>
                         </div>
-                        <b-list-group v-show="mostrar_imagenes">
-                            <b-list-group-item v-for="imagen in publicacion.urls" :key="imagen">
-                                {{imagen}}
-                                <img v-bind:src="require(imagen)" alt="">
+                        <b-list-group v-if="mostrar_imagenes">
+                            <b-list-group-item v-for="imagen in publicacion.urls" :key="imagen.indice">
+                                {{imagen.ruta}}
+                                <img :src="imagen.ruta" alt=""> 
                             </b-list-group-item>
                         </b-list-group>
                     </div>
@@ -90,10 +91,14 @@ export default {
             usuario: "",
             l_p_c_comentarios_d: new Map(),
             urls: [],
-            mostrar_imagenes: false
+            mostrar_imagenes: false,
+            n_img: 0
         }
     }, components:{
         'NavBarInicio':NavBarInicio
+    },
+    mounted(){
+        this.getPublicaciones();
     },
     methods: {
         publicar() {
@@ -105,19 +110,19 @@ export default {
             axios.get(SERVER + '/feed/publicacion?propietario_id=' + id
             ).then(response => {
                 // tmp =response;
-                console.log("CHIIIN")
-                console.log(response);
+                // console.log("CHIIIN")
+                // console.log(response);
                 this.publicaciones_obtenidas = response.data;
                 this.publicaciones_obtenidas_f = response.data.reverse();
                 for(let i = 0; i < this.publicaciones_obtenidas_f.length; i++){
-                    axios.get(SERVER + 'feed/comentario?publicacion_id='+this.publicaciones_obtenidas_f[i].id
+                    axios.get(SERVER + '/feed/comentario?publicacion_id='+this.publicaciones_obtenidas_f[i].id
                     ).then(respuesta => {
                         this.publicaciones_obtenidas_f[i].comentarios = respuesta.data;
                         this.publicaciones_obtenidas_f[i].c_desplegados = false;
                         this.publicaciones_obtenidas_f[i].urls = [];
                         this.l_p_c_comentarios_d.set(this.publicaciones_obtenidas_f[i].id,false);
-                        console.log("AYUDAAAAAAAAA");
-                        console.log(this.l_p_c_comentarios_d.get(this.publicaciones_obtenidas_f[i].id));
+                        console.log("Publicacion obtenida");
+                        // console.log(this.l_p_c_comentarios_d.get(this.publicaciones_obtenidas_f[i].id));
                         console.log(this.publicaciones_obtenidas_f[i]);
                     }).catch(error => {
                         console.log(error);
@@ -130,25 +135,33 @@ export default {
                         // console.log("AYUDAAAAAAAAA");
                         // console.log(this.l_p_c_comentarios_d.get(this.publicaciones_obtenidas_f[i].id));
                         // console.log(this.publicaciones_obtenidas_f[i]);
-                        console.log("PRUEBAAAA");
-                        console.log(res);
+                        // console.log("PRUEBAAAA");
+                        // console.log(res);
                         let objetos_multimedia = res.data;
                         let l_multi_temp = [];
                         for(let j = 0; j < objetos_multimedia.length; j++){
                             
-                            console.log("DENTRO DEL SEGUNDO FOR");
+                            // console.log("DENTRO DEL SEGUNDO FOR");
                             console.log(objetos_multimedia[j]);
                             axios.get(SERVER + '/files/archivos'
                             ).then(m_respuesta => {
-                                console.log("AAAAAAAAAAAAAAAAAAAA 2");
+                                console.log("Archivos");
                                 console.log(m_respuesta.data);
                                 let archivos = m_respuesta.data;
                                 for(let k = 0; k < archivos.length; k++){
-                                    if (archivos[k].nombre == objetos_multimedia[j].multimedia){
+                                    // console.log("IF");
+                                    // console.log(("/" + archivos[k].nombre));
+                                    // console.log(objetos_multimedia[j].multimedia);
+                                    if (( archivos[k].nombre) == ("/" + objetos_multimedia[j].multimedia)){
                                         this.urls.push(archivos[k].url);
-                                        this.publicaciones_obtenidas_f[i].urls.push(archivos[k].ruta);
-                                        console.log(i);
-                                        console.log(this.publicaciones_obtenidas_f[i].urls);
+                                        this.publicaciones_obtenidas_f[i].urls.push({ 
+                                            indice: this.n_img,
+                                            ruta: archivos[k].ruta
+                                            });
+                                        console.log("Archivos coincidentes")
+                                        console.log(this.n_img);
+                                        console.log(this.publicaciones_obtenidas_f[i]);
+                                        this.n_img++;
                                     }
                                 }
                                 // let url = URL.createObjectURL(m_respuesta.data);
@@ -177,7 +190,7 @@ export default {
                 this.$bvModal.show("error");
                 this.titulo_error = error.response.data.Descripcion;
             });
-            axios.get(SERVER + 'usuario/detalle?usuarioId='+id
+            axios.get(SERVER + '/usuario/detalle?usuarioId='+id
             ).then(response => {
                     console.log(response.data.nickName);
                     this.usuario=response.data.nickName;

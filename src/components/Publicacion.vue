@@ -60,7 +60,7 @@
                         </template>
                         <div class="b_mod">
                             <!-- <b-button>Subir desde el ordenador</b-button> -->
-                            <input type="file" id="selector-imagenes" multiple @change="crearMetaData($event.target.files)" accept="image/*"  class="btn btn-primary mb-2">
+                            <input type="file" id="output" multiple @change="crearMetaData($event.target.files)" accept="image/*"  class="btn btn-primary mb-2">
                         </div>
                         <div class="b_mod">
                             <b-button @click="aux">Elegir del perfil</b-button>
@@ -145,6 +145,7 @@ export default {
             });
         },
         publicar(){
+            console.log(store.jwt)
             var f = new Date();
             var mes = f.getMonth() + 1
             mes = mes + ''
@@ -163,15 +164,12 @@ export default {
                 textoPlano: this.texto,
                 fechaCreacion: fecha,
                 esPublica: this.es_publica
-            }).then(response => {
+            }).then(() => {
                 //que significa esto en el archivo original
                 //promesa, es lo que va a hacer esta madre cuando el sercidor responda
-                store.commit("set_jwt", response.data.jwt);//setea el valor del jwt segun lo que nos respondió el servidor
-                console.log(store.state.jwt);
                 router.push("/ui/feed")
             }).catch(error => {
                 //los errores
-                router.push("/ui/publicacion")
                 console.log(error.response.status);
                 this.msj_error = error.response.data.Accion;
                 console.log(error.response.data);
@@ -179,10 +177,9 @@ export default {
                 this.titulo_error = error.response.data.Descripcion;
             });
             for(let i = 0; i < this.lista.length; i++) {
-                axios.post(SERVER + 'feed/multimedia/', this.lista[i])
+                axios.post(SERVER + '/feed/multimedia/', this.lista[i])
                 .then(response => {
-                        store.commit("set_jwt", response.data.jwt);
-                        console.log(store.state.jwt);
+                        console.log(response);
                     }).catch(error => {
                         console.log(error.response.status);
                         this.msj_error = error.response.data.Accion;
@@ -196,7 +193,7 @@ export default {
                 }
             }
             var xhr = new XMLHttpRequest();
-            xhr.open("POST", SERVER+"files/uploadMultipleFiles/");
+            xhr.open("POST", SERVER+"/files/uploadMultipleFiles/");
             xhr.send(formData);
         },
         toggle() {
