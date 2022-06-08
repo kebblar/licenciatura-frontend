@@ -181,9 +181,7 @@ export default {
             axios.get(SERVER + '/feed/publicacion?propietario_id=' + id)
             .then(response => {
                 pubId = response.data[response.data.length-1].id;
-                console.log(pubId);
                 // Actualizamos la metadata de la multimedia
-                console.log(pubId);
                 for(let i = 0; i < this.multimedia.length; i++) {
                     let esVideoTmp = "false";
                     if(this.multimedia[i].type == "imagenes/*"){

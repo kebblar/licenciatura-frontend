@@ -6,8 +6,8 @@
             <h2>Noticias</h2>
         </div>
         <div class=comentar_padre>
-            <button class="c_publicar" v-on:click="publicar">Crear publicación</button>
             <button class="comentar" @click="togle2()">Mostrar imágenes</button>
+            <button class="c_publicar" v-on:click="publicar">Crear publicación</button>
             <button class="comentar" @click="togle()">Mostrar comentarios</button>
         </div>
     </div>
@@ -23,6 +23,7 @@
                             <h4> {{usuario}} </h4>
                             <h6>{{publicacion.fechaCreacion}}</h6>
                         </div>
+                        <button class="c_eliminar" v-on:click="eliminar(publicacion.id)">Eliminar</button>
                     </div>
                     <div>
                         <h4>{{publicacion.textoPlano}}</h4>
@@ -183,12 +184,39 @@ export default {
                 fechaCreacion: fecha
             }).then(response => {
                 console.log(response);
-                console.log("El comentario fue agregado pasó");
                 location.reload();
                 router.go(0);
             }).catch(error => {
                 console.log(error);
             });
+        },
+        eliminar(publicacion_id) {
+            let bandera = confirm("Esta acción eliminará toda la multimedia y comentarios asociados\n ¿Estás seguro?");
+            if (!bandera) {
+                return;
+            }
+            axios.delete(SERVER + '/feed/multimedias/?publicacion_id='+publicacion_id)
+            .then(response => {
+                console.log(response);
+                location.reload();
+            }).catch(error => {
+                console.log(error);
+            });
+            axios.delete(SERVER + '/feed/comentarios/?publicacion_id='+publicacion_id)
+                .then(response => {
+                    console.log(response);
+                    location.reload();
+                    axios.delete(SERVER + '/feed/publicacion/?publicacion_id='+publicacion_id)
+                    .then(response => {
+                        console.log(response);
+                        location.reload();
+                        router.go(0);
+                    }).catch(error => {
+                        console.log(error);
+                    });
+                }).catch(error => {
+                    console.log(error);
+                });
         },
         togle() {
             this.comentar = !this.comentar;
@@ -266,11 +294,24 @@ img {
     border: 1px solid rgb(0, 0, 0);
     color: rgb(255, 255, 255);
     font-family: 'Raleway', sans-serif;
-    width: 600px;
+    width: 250px;
     height: 40px;
     margin-left: auto;
     margin-right: auto;
     border-radius: 5px;
+}
+.c_eliminar {
+    background-color: #e71818;
+    border: 1px solid rgb(255, 255, 255);
+    color: rgb(255, 255, 255);
+    font-family: 'Raleway', sans-serif;
+    width: 150px;
+    height: 40px;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 5px;
+    position: absolute;
+    right: 0;
 }
 .comentario {
     background-color: #727171;
