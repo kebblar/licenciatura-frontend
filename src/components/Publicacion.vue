@@ -130,8 +130,7 @@ export default {
             dialog_multimedia: false,
             lista: [],
             multimedia: [],
-            listaAux: [],
-            conteo: 0
+            listaAux: []
         }
         //que son los componentres, ps los otros componentes que tengo en la carpeta components
     },
@@ -145,7 +144,6 @@ export default {
             });
         },
         publicar(){
-            console.log(store.jwt)
             var f = new Date();
             var mes = f.getMonth() + 1
             mes = mes + ''
@@ -158,6 +156,7 @@ export default {
                 dia = '0' + dia
             }
             var fecha = f.getFullYear() + "-" + mes + "-" + dia + " " + f.getHours() + ':' + f.getMinutes() + ':' + f.getSeconds();
+            // Subimos la publicacion
             axios.post(SERVER + '/feed/publicacion/', {
                 id: "null",
                 usuarioId: store.state.id,
@@ -176,9 +175,32 @@ export default {
                 this.$bvModal.show("error");
                 this.titulo_error = error.response.data.Descripcion;
             });
-            for(let i = 0; i < this.lista.length; i++) {
-                axios.post(SERVER + '/feed/multimedia/', this.lista[i])
-                .then(response => {
+            // Revisamos el id de la última publicación
+            let id = store.state.id
+            var pubId
+            axios.get(SERVER + '/feed/publicacion?propietario_id=' + id)
+            .then(response => {
+                pubId = response.data[response.data.length-1].id;
+                console.log(pubId);
+                // Actualizamos la metadata de la multimedia
+                console.log(pubId);
+                for(let i = 0; i < this.multimedia.length; i++) {
+                    let esVideoTmp = "false";
+                    if(this.multimedia[i].type == "imagenes/*"){
+                        esVideoTmp = "true";
+                    }
+                    this.lista.push({ 
+                        multimediaId: "null",
+                        publicacionId: pubId,
+                        usuarioCreadorId: store.state.id,
+                        multimedia: this.multimedia[i].name,
+                        esVideo: esVideoTmp
+                    });
+                }
+                // Subimos la metadata
+                for(let i = 0; i < this.lista.length; i++) {
+                    axios.post(SERVER + '/feed/multimedia/', this.lista[i])
+                    .then(response => {
                         console.log(response);
                     }).catch(error => {
                         console.log(error.response.status);
@@ -186,15 +208,27 @@ export default {
                         console.log(error.response.data);
                         this.$bvModal.show("error");
                         this.titulo_error = error.response.data.Descripcion;
-                });
-                var formData = new FormData();
-                for(var index = 0; index < this.multimedia.length; index++) {
-                    formData.append("files", this.multimedia[index]);
+                    });
                 }
+            }).catch(error => { 
+                //los errores
+                router.push("/ui/publicacion")
+                console.log(error.response.status);
+                this.msj_error = error.response.data.Accion;
+                console.log(error.response.data);
+                this.$bvModal.show("error");
+                this.titulo_error = error.response.data.Descripcion;
+            });  
+            // Subimos los archivos de la multimedia
+            let formData = new FormData();
+            for(let index = 0; index < this.multimedia.length; index++) {
+                formData.append("files", this.multimedia[index]);
             }
-            var xhr = new XMLHttpRequest();
-            xhr.open("POST", SERVER+"/files/uploadMultipleFiles/");
-            xhr.send(formData);
+            if (this.multimedia.length > 0) {
+                let xhr = new XMLHttpRequest();
+                xhr.open("POST", SERVER+"/files/uploadMultipleFiles/");
+                xhr.send(formData);
+            }
         },
         toggle() {
             this.es_publica = !this.es_publica;
@@ -203,24 +237,12 @@ export default {
             router.push("/ui/feed");
         },
         crearMetaData(fileList) {
-            this.conteo = fileList.length;
+            this.multimedia = fileList; 
             for (let i = 0; i < fileList.length; i++) {
-                var esVideoTmp = "false";
-                if(fileList[i].type == "imagenes/*"){
-                    esVideoTmp = "true";
-                }
-                this.lista.push({ 
-                    multimediaId: "null",
-                    publicacionId: 8,//id de la publicacion 
-                    usuarioCreadorId: store.state.id,
-                    multimedia: fileList[i].name,
-                    esVideo: esVideoTmp //+ nombre.img
-                });
-                this.multimedia = fileList; 
                 var output = document.getElementById('output');
                 output.src = URL.createObjectURL(fileList[0]);
                 output.onload = function() {
-                URL.revokeObjectURL(output.src) // free memory
+                    URL.revokeObjectURL(output.src) // free memory
                 };
             }
         }

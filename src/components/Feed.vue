@@ -7,6 +7,8 @@
         </div>
         <div class=comentar_padre>
             <button class="c_publicar" v-on:click="publicar">Crear publicación</button>
+            <button class="comentar" @click="togle2()">Mostrar imágenes</button>
+            <button class="comentar" @click="togle()">Mostrar comentarios</button>
         </div>
     </div>
     <div class="align-items-center">
@@ -19,29 +21,26 @@
                         </div>
                         <div class="publicacion-fondo-hijo-1">
                             <h4> {{usuario}} </h4>
-                            <h6>{{publicacion.fechaCreacion}} {{publicacion.esPublica}}</h6>
+                            <h6>{{publicacion.fechaCreacion}}</h6>
                         </div>
                     </div>
                     <div>
                         <h4>{{publicacion.textoPlano}}</h4>
-                        <p>{{publicacion}}</p>
                         
-                        <div class=comentar_padre>
-                            <button class="comentar" @click="togle2()">Mostrar imagenes</button>
-                        </div>
-                        <b-list-group v-if="mostrar_imagenes">
+                        <v-row v-if="mostrar_imagenes">
+                            <v-col v-for="imagen in publicacion.urls" :key="imagen.indice">
+                                <img :src="imagen.ruta" width="150" alt=""> 
+                            </v-col>
+                        </v-row>
+                        <!-- SI QUIEREN MOSTRAR IMAGENES A LO LARGO -->
+                        <!-- <b-list-group v-if="mostrar_imagenes">
                             <b-list-group-item v-for="imagen in publicacion.urls" :key="imagen.indice">
-                                {{imagen.ruta}}
-                                <img :src="imagen.ruta" alt=""> 
+                                <img :src="imagen.ruta" width="150" alt=""> 
                             </b-list-group-item>
-                        </b-list-group>
+                        </b-list-group> -->
                     </div>
 
-                    <div>
-                        <div class=comentar_padre>
-                            <button class="comentar" @click="togle()">Comentar</button>
-                        </div>
-                        
+                    <div>    
                         <div v-if="comentar">
                             <div class=comentar_padre>
                                 <b-form-textarea type="text" v-model="comentario"  size="lg" placeholder="Escribe un comentario"></b-form-textarea>
@@ -106,12 +105,8 @@ export default {
         },
         getPublicaciones() {
             let id = store.state.id
-            
             axios.get(SERVER + '/feed/publicacion?propietario_id=' + id
             ).then(response => {
-                // tmp =response;
-                // console.log("CHIIIN")
-                // console.log(response);
                 this.publicaciones_obtenidas = response.data;
                 this.publicaciones_obtenidas_f = response.data.reverse();
                 for(let i = 0; i < this.publicaciones_obtenidas_f.length; i++){
@@ -121,55 +116,27 @@ export default {
                         this.publicaciones_obtenidas_f[i].c_desplegados = false;
                         this.publicaciones_obtenidas_f[i].urls = [];
                         this.l_p_c_comentarios_d.set(this.publicaciones_obtenidas_f[i].id,false);
-                        console.log("Publicacion obtenida");
-                        // console.log(this.l_p_c_comentarios_d.get(this.publicaciones_obtenidas_f[i].id));
-                        console.log(this.publicaciones_obtenidas_f[i]);
                     }).catch(error => {
                         console.log(error);
                     });
                     axios.get(SERVER + '/feed/multimedia/?multimedia_id='+this.publicaciones_obtenidas_f[i].id
                     ).then(res => {
-                        // this.publicaciones_obtenidas_f[i].comentarios = respuesta.data;
-                        // this.publicaciones_obtenidas_f[i].c_desplegados = false;
-                        // this.l_p_c_comentarios_d.set(this.publicaciones_obtenidas_f[i].id,false);
-                        // console.log("AYUDAAAAAAAAA");
-                        // console.log(this.l_p_c_comentarios_d.get(this.publicaciones_obtenidas_f[i].id));
-                        // console.log(this.publicaciones_obtenidas_f[i]);
-                        // console.log("PRUEBAAAA");
-                        // console.log(res);
                         let objetos_multimedia = res.data;
                         let l_multi_temp = [];
                         for(let j = 0; j < objetos_multimedia.length; j++){
-                            
-                            // console.log("DENTRO DEL SEGUNDO FOR");
-                            console.log(objetos_multimedia[j]);
                             axios.get(SERVER + '/files/archivos'
                             ).then(m_respuesta => {
-                                console.log("Archivos");
-                                console.log(m_respuesta.data);
                                 let archivos = m_respuesta.data;
                                 for(let k = 0; k < archivos.length; k++){
-                                    // console.log("IF");
-                                    // console.log(("/" + archivos[k].nombre));
-                                    // console.log(objetos_multimedia[j].multimedia);
                                     if (( archivos[k].nombre) == ("/" + objetos_multimedia[j].multimedia)){
                                         this.urls.push(archivos[k].url);
                                         this.publicaciones_obtenidas_f[i].urls.push({ 
                                             indice: this.n_img,
                                             ruta: archivos[k].ruta
                                             });
-                                        console.log("Archivos coincidentes")
-                                        console.log(this.n_img);
-                                        console.log(this.publicaciones_obtenidas_f[i]);
                                         this.n_img++;
                                     }
                                 }
-                                // let url = URL.createObjectURL(m_respuesta.data);
-                                // l_multi_temp.push(url);
-                                
-                                // console.log("AAAA 2");
-                                //console.log(this.publicaciones_obtenidas_f[i]);
-                            
                             }).catch(error => {
                                 console.log(error);
                             });
@@ -179,8 +146,6 @@ export default {
                         console.log(error);
                     });
                 }
-                console.log("----------------->Los urls son:");
-                console.log(this.urls);
             }).catch(error => {
                 //los errores
                 router.push("/ui/publicacion")
@@ -190,14 +155,12 @@ export default {
                 this.$bvModal.show("error");
                 this.titulo_error = error.response.data.Descripcion;
             });
-            axios.get(SERVER + '/usuario/detalle?usuarioId='+id
-            ).then(response => {
-                    console.log(response.data.nickName);
+            axios.get(SERVER + '/usuario/detalle?usuarioId='+id)
+            .then(response => {
                     this.usuario=response.data.nickName;
                 }).catch(error => {
                     console.log(error);
             });
-            
         },
         publicar_comentario(publicacion_id,usuario_id) {
             var f = new Date();
@@ -211,9 +174,6 @@ export default {
             if(dia.length == 1){
                 dia = '0' + dia
             }
-            console.log(typeof parseInt(publicacion_id));
-            console.log(typeof parseInt(publicacion_id));
-            console.log(publicacion_id);
             var fecha = f.getFullYear() + "-" + mes + "-" + dia + " " + f.getHours() + ':' + f.getMinutes() + ':' + f.getSeconds();
             axios.post(SERVER + '/feed/comentario', {
                 comentarioId: "null",
@@ -224,7 +184,6 @@ export default {
             }).then(response => {
                 console.log(response);
                 console.log("El comentario fue agregado pasó");
-                // router.push("/ui/feed");
                 location.reload();
                 router.go(0);
             }).catch(error => {
@@ -232,24 +191,7 @@ export default {
             });
         },
         togle() {
-            // let i = this.publicaciones_obtenidas_f.length-id;
-            //this.publicaciones_obtenidas_f[i].c_desplegados = !this.publicaciones_obtenidas_f[i].c_desplegados;
-            // let anterior = this.l_p_c_comentarios_d.get(this.publicaciones_obtenidas_f[i].id);
-            // this.l_p_c_comentarios_d.set(this.publicaciones_obtenidas_f[i].id,!anterior);
-            
             this.comentar = !this.comentar;
-
-            // this.$nextTick(function() {
-            //     this.publicaciones_obtenidas_f[i].c_desplegados = !this.publicaciones_obtenidas_f[i].c_desplegados;
-                
-            // });
-            // console.log("TOGGLE: ");
-            // // this.publicacion_actual = id;
-            // console.log("TOGLE ID:");
-            // console.log(id);
-            console.log(this.comentar);
-            // //console.log(this.l_p_c_comentarios_d.get(this.publicaciones_obtenidas_f[i].id));
-            // console.log(this.publicaciones_obtenidas_f[i].c_desplegados);
         },
         togle2() {
             this.mostrar_imagenes = !this.mostrar_imagenes;
@@ -263,13 +205,7 @@ export default {
     },
     created: function () {
         window.addEventListener('pageshow', this.getPublicaciones);
-        // window.addEventListener('click', this.obtener_comentarios(this.publicacion_actual));
     },
-
-    // destroyed: function () {
-    //     window.removeEventListener('pageshow', this.getPublicaciones);
-    //     // window.addEventListener('click', this.obtener_comentarios(this.publicacion_actual));
-    // }
 }
 </script>
 
@@ -473,6 +409,12 @@ button {
     flex: 120px;
     text-align: center;
     text-decoration: none;
+}
+.navbar {
+  overflow: hidden;
+  position: fixed; 
+  top: 0; 
+  width: 100%; 
 }
 @media (max-width: 1300px) {
     .my-card{

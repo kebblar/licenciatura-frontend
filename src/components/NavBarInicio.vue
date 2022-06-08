@@ -59,4 +59,10 @@ export default {
         header .active {
             background-color: #8c8f8e;
         }
+
+        /* header {
+            position: fixed;
+            top: 0; 
+            width: 100%; 
+        } */
 </style>
